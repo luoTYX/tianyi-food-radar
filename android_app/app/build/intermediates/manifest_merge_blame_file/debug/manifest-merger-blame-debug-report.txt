@@ -1,0 +1,112 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.tianyi.radar"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="24"
+9        android:targetSdkVersion="36" />
+10
+11    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+11-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:4:5-79
+11-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:4:22-76
+12    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+12-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:5:5-81
+12-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:5:22-78
+13    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+13-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:6:5-85
+13-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:6:22-82
+14    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+14-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:7:5-77
+14-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:7:22-74
+15    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+15-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:8:5-86
+15-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:8:22-83
+16    <uses-permission android:name="android.permission.INTERNET" />
+16-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:9:5-67
+16-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:9:22-64
+17    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+17-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:10:5-77
+17-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:10:22-74
+18
+19    <permission
+19-->[androidx.core:core:1.9.0] C:\Users\13818\.gradle\caches\transforms-3\69031d9de34e6ae4e80492f7a424b6d1\transformed\core-1.9.0\AndroidManifest.xml:22:5-24:47
+20        android:name="com.tianyi.radar.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+20-->[androidx.core:core:1.9.0] C:\Users\13818\.gradle\caches\transforms-3\69031d9de34e6ae4e80492f7a424b6d1\transformed\core-1.9.0\AndroidManifest.xml:23:9-81
+21        android:protectionLevel="signature" />
+21-->[androidx.core:core:1.9.0] C:\Users\13818\.gradle\caches\transforms-3\69031d9de34e6ae4e80492f7a424b6d1\transformed\core-1.9.0\AndroidManifest.xml:24:9-44
+22
+23    <uses-permission android:name="com.tianyi.radar.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+23-->[androidx.core:core:1.9.0] C:\Users\13818\.gradle\caches\transforms-3\69031d9de34e6ae4e80492f7a424b6d1\transformed\core-1.9.0\AndroidManifest.xml:26:5-97
+23-->[androidx.core:core:1.9.0] C:\Users\13818\.gradle\caches\transforms-3\69031d9de34e6ae4e80492f7a424b6d1\transformed\core-1.9.0\AndroidManifest.xml:26:22-94
+24
+25    <application
+25-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:12:5-33:19
+26        android:allowBackup="true"
+26-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:13:9-35
+27        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+27-->[androidx.core:core:1.9.0] C:\Users\13818\.gradle\caches\transforms-3\69031d9de34e6ae4e80492f7a424b6d1\transformed\core-1.9.0\AndroidManifest.xml:28:18-86
+28        android:debuggable="true"
+29        android:extractNativeLibs="false"
+30        android:icon="@drawable/ic_launcher"
+30-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:14:9-45
+31        android:label="天依雷达"
+31-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:15:9-29
+32        android:networkSecurityConfig="@xml/network_security_config"
+32-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:18:9-69
+33        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+33-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:16:9-65
+34        android:usesCleartextTraffic="true" >
+34-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:17:9-44
+35        <activity
+35-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:20:9-27:20
+36            android:name="com.tianyi.radar.MainActivity"
+36-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:21:13-41
+37            android:exported="true" >
+37-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:22:13-36
+38            <intent-filter>
+38-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:23:13-26:29
+39                <action android:name="android.intent.action.MAIN" />
+39-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:24:17-69
+39-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:24:25-66
+40
+41                <category android:name="android.intent.category.LAUNCHER" />
+41-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:25:17-77
+41-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:25:27-74
+42            </intent-filter>
+43        </activity>
+44
+45        <service
+45-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:29:9-32:40
+46            android:name="com.tianyi.radar.LocationService"
+46-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:30:13-44
+47            android:exported="false"
+47-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:32:13-37
+48            android:foregroundServiceType="location" />
+48-->C:\Users\13818\Desktop\food astr\android_app\app\src\main\AndroidManifest.xml:31:13-53
+49
+50        <provider
+50-->[androidx.emoji2:emoji2:1.2.0] C:\Users\13818\.gradle\caches\transforms-3\986cb90b811bf58fb8e8ff4e6584552d\transformed\emoji2-1.2.0\AndroidManifest.xml:24:9-32:20
+51            android:name="androidx.startup.InitializationProvider"
+51-->[androidx.emoji2:emoji2:1.2.0] C:\Users\13818\.gradle\caches\transforms-3\986cb90b811bf58fb8e8ff4e6584552d\transformed\emoji2-1.2.0\AndroidManifest.xml:25:13-67
+52            android:authorities="com.tianyi.radar.androidx-startup"
+52-->[androidx.emoji2:emoji2:1.2.0] C:\Users\13818\.gradle\caches\transforms-3\986cb90b811bf58fb8e8ff4e6584552d\transformed\emoji2-1.2.0\AndroidManifest.xml:26:13-68
+53            android:exported="false" >
+53-->[androidx.emoji2:emoji2:1.2.0] C:\Users\13818\.gradle\caches\transforms-3\986cb90b811bf58fb8e8ff4e6584552d\transformed\emoji2-1.2.0\AndroidManifest.xml:27:13-37
+54            <meta-data
+54-->[androidx.emoji2:emoji2:1.2.0] C:\Users\13818\.gradle\caches\transforms-3\986cb90b811bf58fb8e8ff4e6584552d\transformed\emoji2-1.2.0\AndroidManifest.xml:29:13-31:52
+55                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+55-->[androidx.emoji2:emoji2:1.2.0] C:\Users\13818\.gradle\caches\transforms-3\986cb90b811bf58fb8e8ff4e6584552d\transformed\emoji2-1.2.0\AndroidManifest.xml:30:17-75
+56                android:value="androidx.startup" />
+56-->[androidx.emoji2:emoji2:1.2.0] C:\Users\13818\.gradle\caches\transforms-3\986cb90b811bf58fb8e8ff4e6584552d\transformed\emoji2-1.2.0\AndroidManifest.xml:31:17-49
+57            <meta-data
+57-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\13818\.gradle\caches\transforms-3\b414648e0504e137bfb93e4ffd20cdf8\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:31:13-33:52
+58                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+58-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\13818\.gradle\caches\transforms-3\b414648e0504e137bfb93e4ffd20cdf8\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:32:17-78
+59                android:value="androidx.startup" />
+59-->[androidx.lifecycle:lifecycle-process:2.4.1] C:\Users\13818\.gradle\caches\transforms-3\b414648e0504e137bfb93e4ffd20cdf8\transformed\lifecycle-process-2.4.1\AndroidManifest.xml:33:17-49
+60        </provider>
+61    </application>
+62
+63</manifest>

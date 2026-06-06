@@ -1,0 +1,14 @@
+[Unit]
+Description=天依美食雷达 - 位置接收服务
+After=network.target
+
+[Service]
+Type=simple
+User=admin
+WorkingDirectory=/home/admin/tianyi_radar
+ExecStart=/usr/bin/python3 /home/admin/tianyi_radar/server.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
