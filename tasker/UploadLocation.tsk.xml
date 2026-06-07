@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TaskerData version="1.0">
+  <!--
+  天依美食雷达 - Tasker 定时上传位置
+  导入：Tasker -> 任务 -> 长按 -> 导入
+  -->
+  <Task sr="task">
+    <cdate>1700000000000</cdate>
+    <edate>1700000000000</edate>
+    <id>1</id>
+    <nme>上传位置给天依</nme>
+    <pri>10</pri>
+    <Kid sr="Kid">
+      <launchID>1</launchID>
+    </Kid>
+
+    <!-- Action 1: 获取GPS位置，超时30秒 -->
+    <Action sr="act0" ve="7">
+      <code>415</code>
+      <Str sr="arg0" ve="3">GPS</Str>
+      <Int sr="arg1" val="30"/>
+      <Int sr="arg2" val="15"/>
+      <Int sr="arg3" val="1"/>
+      <Int sr="arg4" val="1"/>
+    </Action>
+
+    <!-- Action 2: POST位置到服务器(走HTTPS) -->
+    <Action sr="act1" ve="7">
+      <code>116</code>
+      <Str sr="arg0" ve="3">https://8.130.43.250/api/location</Str>
+      <Str sr="arg1" ve="3"></Str>
+      <Str sr="arg2" ve="3">Body</Str>
+      <Str sr="arg3" ve="3">Content-Type:application/json</Str>
+      <Str sr="arg4" ve="3"></Str>
+      <Str sr="arg5" ve="3">{"lat":%LOC, "lng":%LOCN, "accuracy":%LOCACC, "secret":"tianyi_food_radar_2024"}</Str>
+      <Str sr="arg6" ve="3">https://8.130.43.250/api/location</Str>
+      <Int sr="arg7" val="20"/>
+      <Int sr="arg8" val="1"/>
+      <Str sr="arg9" ve="3"></Str>
+      <!-- arg8=1 表示信任任何SSL证书 -->
+    </Action>
+
+    <!-- Action 3: 成功时悄悄通知(可选) -->
+    <Action sr="act2" ve="7">
+      <code>523</code>
+      <Str sr="arg0" ve="3">天依雷达</Str>
+      <Str sr="arg1" ve="3">位置已上传~</Str>
+      <Int sr="arg2" val="0"/>
+      <Int sr="arg3" val="0"/>
+      <Int sr="arg4" val="0"/>
+      <ConditionList sr="if">
+        <Condition sr="c0" ve="3">
+          <lhs>%HTTPR</lhs>
+          <op>0</op>
+          <rhs>200</rhs>
+        </Condition>
+      </ConditionList>
+    </Action>
+
+  </Task>
+</TaskerData>

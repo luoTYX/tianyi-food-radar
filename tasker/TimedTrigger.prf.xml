@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TaskerData version="1.0">
+  <!--
+  定时触发器 - 每5分钟触发一次上传
+  导入方式：Tasker -> 配置文件 -> 长按 -> 导入
+  -->
+  <Profile sr="prof" ve="2">
+    <cdate>1700000000000</cdate>
+    <edate>1700000000000</edate>
+    <id>2</id>
+    <nme>定时上传位置</nme>
+
+    <!-- 每5分钟触发 -->
+    <Time sr="con0" ve="2">
+      <fh>-1</fh>
+      <fm>-1</fm>
+      <th>-1</th>
+      <tm>-1</tm>
+      <rep>1</rep>
+      <repval>5</repval>
+    </Time>
+
+    <!-- 关联任务 -->
+    <Task sr="task">
+      <id>1</id>
+    </Task>
+
+  </Profile>
+</TaskerData>
