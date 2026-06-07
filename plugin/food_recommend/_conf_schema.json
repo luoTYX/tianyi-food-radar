@@ -30,9 +30,9 @@
     "hint": "最多推荐几家店"
   },
   "owner_id": {
-    "description": "机主QQ号(只有这人能用手机定位)",
+    "description": "机主sid",
     "type": "string",
     "default": "",
-    "hint": "填了之后，别人不带地点搜会提示他们指定位置"
+    "hint": "AstrBot的sender_id，填了之后只有这人能免地点搜定位"
   }
 }
