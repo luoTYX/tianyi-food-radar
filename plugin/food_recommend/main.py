@@ -192,7 +192,7 @@ class TianyiFoodRadar(Star):
                 return
         else:
             if not self._is_owner(event):
-                yield event.plain_result("你得说个地点诶…比如加上「徐家汇」")
+                yield event.plain_result("这是老大的功能啦~")
                 return
             loc = await self._get_location()
             if not loc:
@@ -232,7 +232,7 @@ class TianyiFoodRadar(Star):
                 return
         else:
             if not self._is_owner(event):
-                yield event.plain_result("你得说个地点诶…比如加上「徐家汇」")
+                yield event.plain_result("这是老大的功能啦~")
                 return
             loc = await self._get_location()
             if not loc:
@@ -302,6 +302,9 @@ class TianyiFoodRadar(Star):
     @filter.command("/我在哪", alias={"/whereami", "/我在哪里", "我在哪", "whereami"})
     async def cmd_where(self, event: AstrMessageEvent):
         """看看上次上报的位置"""
+        if not self._is_owner(event):
+            yield event.plain_result("这是老大的功能啦~")
+            return
         loc = await self._get_location()
         if not loc:
             yield event.plain_result("不知道诶… 手机没传位置上来")
@@ -343,7 +346,7 @@ class TianyiFoodRadar(Star):
         if not self.amap_key:
             return
         if not self._is_owner(event):
-            yield event.plain_result("你得说个地点诶…比如「徐家汇附近有啥好吃的」")
+            yield event.plain_result("这是老大的功能啦~")
             return
         loc = await self._get_location()
         if not loc:
@@ -368,7 +371,7 @@ class TianyiFoodRadar(Star):
         if not self.amap_key:
             return
         if not self._is_owner(event):
-            yield event.plain_result("你得说个地点诶…试试「/想吃 火锅 徐汇」")
+            yield event.plain_result("这是老大的功能啦~")
             return
         loc = await self._get_location()
         if not loc:
@@ -426,6 +429,92 @@ class TianyiFoodRadar(Star):
             lines.append("")
         lines.append("想去哪家 跟我说~")
         yield event.plain_result("\n".join(lines))
+
+    # ---------- LLM工具：让模型能直接调用 ----------
+    @filter.llm_tool(name="search_food_nearby")
+    async def tool_search_food(self, event: AstrMessageEvent, location: str = ""):
+        """用户问附近有什么好吃的或饿了想吃东西。可以指定地点。
+
+        Args:
+            location(string): 可选，搜索地点，如"徐家汇"、"静安寺"。不填则用手机定位
+        """
+        if not self.amap_key:
+            yield event.plain_result("唔 老大还没配高德地图的key…")
+            return
+
+        lat, lng = None, None
+        if location:
+            lat, lng = await self._geocode(location)
+            if lat is None:
+                yield event.plain_result(f"唔…找不到{location}在哪诶")
+                return
+        else:
+            if not self._is_owner(event):
+                yield event.plain_result("这是老大的功能啦~")
+                return
+            loc_data = await self._get_location()
+            if not loc_data:
+                yield event.plain_result("诶 拿不到位置…")
+                return
+            lat, lng = loc_data["lat"], loc_data["lng"]
+
+        pois = await self._search_food(lat, lng)
+        yield event.plain_result(self._make_reply(pois, lat, lng))
+
+    @filter.llm_tool(name="search_food_keyword")
+    async def tool_search_keyword(self, event: AstrMessageEvent, keyword: str, location: str = ""):
+        """用户想吃某种特定食物，比如火锅、奶茶、小笼包。可指定地点。
+
+        Args:
+            keyword(string): 想吃的类型，如火锅、奶茶、甜品、日料
+            location(string): 可选，搜索地点，如"徐家汇"
+        """
+        if not self.amap_key:
+            yield event.plain_result("唔 老大还没配高德地图的key…")
+            return
+
+        lat, lng = None, None
+        if location:
+            lat, lng = await self._geocode(location)
+            if lat is None:
+                yield event.plain_result(f"唔…找不到{location}在哪诶")
+                return
+        else:
+            if not self._is_owner(event):
+                yield event.plain_result("这是老大的功能啦~")
+                return
+            loc_data = await self._get_location()
+            if not loc_data:
+                yield event.plain_result("诶 拿不到位置…")
+                return
+            lat, lng = loc_data["lat"], loc_data["lng"]
+
+        url = "https://restapi.amap.com/v3/place/around"
+        params = {
+            "key": self.amap_key,
+            "location": f"{lng},{lat}",
+            "keywords": keyword,
+            "radius": self.radius,
+            "offset": min(self.top_n + 5, 20),
+            "page": 1,
+            "extensions": "all",
+            "sortrule": "weight",
+        }
+        try:
+            async with aiohttp.ClientSession() as s:
+                async with s.get(url, params=params, timeout=aiohttp.ClientTimeout(total=8)) as r:
+                    j = await r.json()
+            pois = j.get("pois", []) if j.get("status") == "1" else []
+        except Exception:
+            pois = []
+
+        if not pois:
+            yield event.plain_result(f"附近好像没有{keyword}诶…换一个试试？")
+            return
+
+        picks = pois[:self.top_n]
+        reply = self._make_reply(picks, lat, lng)
+        yield event.plain_result(reply)
 
     async def terminate(self):
         pass
