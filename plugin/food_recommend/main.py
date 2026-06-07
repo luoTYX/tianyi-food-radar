@@ -341,7 +341,10 @@ class TianyiFoodRadar(Star):
     async def on_food_mention(self, event: AstrMessageEvent):
         """不需要精确命令，聊到吃的就能触发"""
         if not self.amap_key:
-            return  # 没配置key就装死
+            return
+        if not self._is_owner(event):
+            yield event.plain_result("你得说个地点诶…比如「徐家汇附近有啥好吃的」")
+            return
         loc = await self._get_location()
         if not loc:
             yield event.plain_result("诶 拿不到你的位置诶… 手机开了定位没呀")
@@ -363,6 +366,9 @@ class TianyiFoodRadar(Star):
             return
 
         if not self.amap_key:
+            return
+        if not self._is_owner(event):
+            yield event.plain_result("你得说个地点诶…试试「/想吃 火锅 徐汇」")
             return
         loc = await self._get_location()
         if not loc:
