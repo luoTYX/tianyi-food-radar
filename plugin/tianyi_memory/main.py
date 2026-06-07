@@ -1,9 +1,9 @@
 """
-天依小本本 - 记忆插件
-帮天依记住和每个人的对话，不会再问「你谁啊」「你之前说过啥」
+天依小本本 - 群聊记忆插件
+记住和每个人的对话，换人聊也不断片
 """
 import json
-import re
+import time
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.star import Context, Star
 
@@ -11,88 +11,98 @@ from astrbot.api.star import Context, Star
 class TianyiMemory(Star):
     def __init__(self, context: Context, config: dict = None):
         super().__init__(context)
-        self.max_memory = 3  # 每人最多记3条
+        self.max_history = 10      # 每个会话记最近10轮
+        self.max_user_facts = 3    # 每人最多记3条个人信息
 
-    async def _get_memory(self, user_id: str) -> list:
-        """读某个人的记忆"""
-        data = await self.get_kv_data(f"mem_{user_id}")
+    # ----- 用户画像 -----
+    async def _get_facts(self, user_id: str) -> list:
+        data = await self.get_kv_data(f"user_{user_id}")
         return json.loads(data) if data else []
 
-    async def _save_memory(self, user_id: str, memories: list):
-        """保存记忆"""
-        await self.put_kv_data(f"mem_{user_id}", json.dumps(memories, ensure_ascii=False))
+    async def _save_facts(self, user_id: str, facts: list):
+        await self.put_kv_data(f"user_{user_id}", json.dumps(facts, ensure_ascii=False))
 
-    async def _extract_fact(self, text: str, user_id: str):
-        """从对话里提取值得记住的事"""
-        facts = []
-        keywords = {
-            "喜欢": "喜欢",
-            "爱吃": "爱吃",
-            "不喜欢": "不喜欢",
-            "讨厌": "讨厌",
-            "是": "是",  # 我是学生 / 我是程序员
-            "在": "在",    # 我在北京
-            "叫": "叫",  # 叫我小王
-            "做": "做",  # 我做设计的
-        }
+    # ----- 群聊历史 -----
+    def _session_key(self, event):
+        """私聊/群聊 区分"""
+        gid = event.get_group_id() if hasattr(event, 'get_group_id') else ""
+        return f"group_{gid}" if gid else f"private_{event.get_sender_id()}"
 
-        for kw, label in keywords.items():
-            if kw in text:
-                idx = text.index(kw)
-                snippet = text[idx:idx + 20].strip()
-                if snippet and len(snippet) > 3:
-                    facts.append(snippet)
+    async def _get_history(self, session: str) -> list:
+        data = await self.get_kv_data(f"hist_{session}")
+        return json.loads(data) if data else []
 
-        if facts:
-            mem = await self._get_memory(user_id)
-            for f in facts:
-                if f not in mem:
-                    mem.append(f)
-            # 只保留最近几条
-            if len(mem) > self.max_memory:
-                mem = mem[-self.max_memory:]
-            await self._save_memory(user_id, mem)
+    async def _save_history(self, session: str, history: list):
+        await self.put_kv_data(f"hist_{session}", json.dumps(history, ensure_ascii=False))
 
-    def _build_context(self, mems: list) -> str:
-        """把记忆拼成一段上下文"""
-        if not mems:
+    def _summary(self, user_name: str, facts: list) -> str:
+        if not facts:
             return ""
-        lines = [f"- {m}" for m in mems]
-        return "关于这人你记得：" + "；".join(mems) + "。\n"
+        return f"「{user_name}」之前说过：" + "；".join(facts) + "。\n"
 
-    # 钩子：在LLM收到消息前，注入用户记忆
+    # ----- LLM请求前：注入上下文 -----
     @filter.on_llm_request()
-    async def inject_memory(self, event: AstrMessageEvent):
-        """在每条消息前注入对应用户的记忆"""
+    async def inject_context(self, event: AstrMessageEvent):
         try:
             sender = event.get_sender_id()
-            user_name = event.get_sender_name() or ""
+            user_name = event.get_sender_name() or "有人"
+            session = self._session_key(event)
 
-            # 读这个人的记忆
-            mems = await self._get_memory(sender)
-            if mems:
-                ctx = self._build_context(mems)
-                # 加在消息前面，让模型能看到
-                original = event.message_str
-                event.message_str = f"[备忘] {ctx}\n{user_name}: {original}"
+            # 1. 这个人的画像
+            facts = await self._get_facts(sender)
+            user_context = self._summary(user_name, facts)
+
+            # 2. 最近群聊记录
+            history = await self._get_history(session)
+            chat_context = ""
+            if history:
+                recent = history[-self.max_history:]
+                chat_context = "刚才在聊：\n" + "\n".join(f"- {h['name']}: {h['msg'][:40]}" for h in recent) + "\n"
+
+            # 3. 拼到用户消息前面
+            ctx = user_context + chat_context
+            if ctx:
+                event.message_str = f"[备忘]\n{ctx}\n---\n{user_name}: {event.message_str}"
+
         except Exception:
             pass
 
-    # 钩子：LLM回复后，从回复中提取可记的事
+    # ----- LLM回复后：记录 -----
     @filter.on_llm_response()
-    async def learn_from_conversation(self, event: AstrMessageEvent):
-        """分析对话中学到的东西"""
+    async def record_conversation(self, event: AstrMessageEvent):
         try:
-            msg = event.message_str
             sender = event.get_sender_id()
+            user_name = event.get_sender_name() or "有人"
+            session = self._session_key(event)
 
-            # 从用户的话里提取
-            await self._extract_fact(msg, sender)
+            # 记录群聊历史
+            history = await self._get_history(session)
+            history.append({
+                "name": user_name,
+                "msg": event.message_str[:60],
+                "time": int(time.time())
+            })
+            if len(history) > 20:
+                history = history[-20:]
+            await self._save_history(session, history)
 
-            # 如果回复里有"记住了""知道了"这类确认，也试着提取
-            if any(w in msg for w in ["记住了", "记下了", "知道啦", "好哒"]):
-                # 往前找用户说了啥
-                pass
+            # 从对话里提取关键信息
+            msg = event.message_str
+            facts = await self._get_facts(sender)
+            keywords = ["喜欢", "爱吃", "不喜欢", "讨厌", "在", "是", "做", "叫", "住"]
+
+            for kw in keywords:
+                if kw in msg:
+                    idx = msg.index(kw)
+                    snippet = msg[idx:idx + 25].strip()
+                    if snippet and len(snippet) > 3 and snippet not in facts:
+                        facts.append(snippet)
+                        if len(facts) > self.max_user_facts:
+                            facts.pop(0)
+
+            if facts:
+                await self._save_facts(sender, facts)
+
         except Exception:
             pass
 
