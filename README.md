@@ -12,10 +12,9 @@
 
 ```
 根目录          → 插件文件（给AstrBot插件市场用的）
-extras/
-  server/       → 定位接收服务（Python，放服务器上跑）
-  android_app/  → 安卓定位App源码
-  tasker/       → Tasker备用方案
+server/       → 定位接收服务（Python，放服务器上跑）
+android_app/  → 安卓定位App源码
+tasker/       → Tasker备用方案
 ```
 
 ## 安装
@@ -35,7 +34,7 @@ https://github.com/luoTYX/tianyi-food-radar
 服务器上一行搞定：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/luoTYX/tianyi-food-radar/main/extras/server/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/luoTYX/tianyi-food-radar/main/server/install.sh | bash
 ```
 
 这会把定位接收服务下载到 `~/tianyi_radar/` 并后台启动，监听8899端口。然后用nginx反代一下 `/api/` 路径就行——不用的话也直接 `http://你的IP:8899/api/` 访问。
@@ -44,7 +43,7 @@ curl -fsSL https://raw.githubusercontent.com/luoTYX/tianyi-food-radar/main/extra
 
 去 [Releases](https://github.com/luoTYX/tianyi-food-radar/releases) 下载APK装手机上。打开后点设置填服务器地址和密钥，打开开关就自动上传定位了。默认15分钟一次，设置里能调。
 
-也支持Tasker：extras/tasker/ 里有配好的xml文件。
+也支持Tasker：tasker/ 里有配好的xml文件。
 
 ---
 
