@@ -69,4 +69,8 @@ curl -fsSL https://raw.githubusercontent.com/luoTYX/tianyi-food-radar/main/serve
 
 ## License
 
-MIT
+MIT © 依一壹1
+
+---
+
+<p align="center"><span style="color:#66CCFF"><b>华风夏韵 · 洛水天依</b></span></p>
